@@ -1,8 +1,11 @@
 import express from "express";
 import { startServer } from "./server";
+import { initializeGlobalMiddleware } from "./middleware/globals.middleware";
 
 const app = express();
 
-startServer(app)
+initializeGlobalMiddleware(app);
+
+startServer(app);
 
 export default app;
