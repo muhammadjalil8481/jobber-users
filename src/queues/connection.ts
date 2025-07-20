@@ -10,28 +10,31 @@ import {
 
 async function createConnection(): Promise<Channel | undefined> {
   let retries = 0;
+  const maxRetries = 3;
+
   log.info(
     `Users service createConnection() method: Connecting to RabbitMQ ${config.RABBITMQ_ENDPOINT}...`
   );
-  try {
-    const connection: ChannelModel = await client.connect(
-      `${config.RABBITMQ_ENDPOINT}`
-    );
-    const channel: Channel = await connection.createChannel();
-    log.info("Users service connected to RabbitMQ successfully");
+  while (retries < maxRetries) {
+    try {
+      const url = config.RABBITMQ_ENDPOINT;
+      const connection: ChannelModel = await client.connect(`${url}`);
+      const channel: Channel = await connection.createChannel();
+      log.info("Users service connected to RabbitMQ successfully");
 
-    await consumeBuyerDirectMessage(channel);
-    await consumeSellerDirectMessage(channel);
-    await consumeReviewFanoutMessage(channel);
-    await consumeSeedGigDirectMessage(channel);
+      await consumeBuyerDirectMessage(channel);
+      await consumeSellerDirectMessage(channel);
+      await consumeReviewFanoutMessage(channel);
+      await consumeSeedGigDirectMessage(channel);
 
-    closeConnection(channel, connection);
-    return channel;
-  } catch (error) {
-    retries++;
-    if (retries >= 3) {
-      log.error("Users service createConnection() method", error);
-      process.exit(1);
+      closeConnection(channel, connection);
+      return channel;
+    } catch (error) {
+      retries++;
+      if (retries >= 3) {
+        log.error("Users service createConnection() method", error);
+        process.exit(1);
+      }
     }
   }
 }

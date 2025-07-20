@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { log } from "./logger";
 import { StatusCodes } from "http-status-codes";
 import fs from "fs";
-import { GatewayRequestVerification } from "@muhammadjalil8481/jobber-shared";
+import { checkAuthentication, GatewayRequestVerification } from "@muhammadjalil8481/jobber-shared";
 import { buyerRouter } from "./routes/buyer";
 import { health } from "./controllers/health";
 import { sellerRouter } from "./routes/seller";
@@ -15,8 +15,8 @@ const SELLER_BASE_PATH = "/api/v1/seller";
 
 const router = Router();
 
-router.use(BUYER_BASE_PATH, gatewayMiddleware, buyerRouter);
-router.use(SELLER_BASE_PATH, gatewayMiddleware, sellerRouter);
+router.use(BUYER_BASE_PATH, gatewayMiddleware,checkAuthentication, buyerRouter);
+router.use(SELLER_BASE_PATH, gatewayMiddleware, checkAuthentication, sellerRouter);
 
 router.get("/user-health", health);
 

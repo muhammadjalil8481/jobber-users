@@ -71,9 +71,9 @@ async function consumeMessage(
 
 const consumeBuyerDirectMessage = async (channel: Channel): Promise<void> => {
   await consumeMessage({
-    exchangeName: "jobber-buyer-update",
-    bindingKey: "user-buyer",
-    queueName: "user-buyer-queue",
+    exchangeName: "user_ex_buyer_record",
+    bindingKey: "user_key_buyer_record",
+    queueName: "user_queue_buyer_record",
     channel,
     name: "consumeBuyerDirectMessage()",
     handler: async (msg: ConsumeMessage) => {
